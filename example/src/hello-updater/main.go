@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/sanbornm/go-selfupdate/selfupdate"
+	"github.com/bnulwh/go-selfupdate/selfupdate"
 )
 
 // The purpose of this app is to provide a simple example that just prints
@@ -11,7 +11,7 @@ import (
 // on localhost:8080.
 
 // the app's version. This will be set on build.
-var version string
+var version string = "v1"
 
 // go-selfupdate setup and config
 var updater = &selfupdate.Updater{
