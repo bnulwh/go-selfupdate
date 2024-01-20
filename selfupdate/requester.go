@@ -4,6 +4,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
+)
+
+const (
+	DefaultToken = "ap_pJSFC5wQYkAyI0FIVwKYs9h1hW"
 )
 
 // Requester interface allows developers to customize the method in which
@@ -19,7 +24,14 @@ type HTTPRequester struct{}
 // Fetch will return an HTTP request to the specified url and return
 // the body of the result. An error will occur for a non 200 status code.
 func (httpRequester *HTTPRequester) Fetch(url string) (io.ReadCloser, error) {
-	resp, err := http.Get(url)
+	body := ""
+	req, err := http.NewRequest("GET", url, strings.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", DefaultToken))
+	client := http.DefaultClient
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}

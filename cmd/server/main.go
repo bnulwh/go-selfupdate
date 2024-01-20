@@ -7,16 +7,21 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/kr/binarydist"
 	"github.com/bnulwh/go-selfupdate/selfupdate"
+	"github.com/kr/binarydist"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+)
+
+const (
+	DefaultToken = "ap_pJSFC5wQYkAyI0FIVwKYs9h1hW"
 )
 
 type current struct {
@@ -56,11 +61,38 @@ func main() {
 	flag.Parse()
 
 	router := gin.Default()
+	router.Use(PermissionChecker())
 	//pprof.Register(router, "/pprof")
 	router.StaticFS("/", http.Dir(*servePath))
 	router.POST("/upload", PostUpload)
 	router.Run(":8080")
 
+}
+
+func PermissionChecker() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		auth := ctx.Request.Header.Get("Authorization")
+		if auth == "" {
+			ctx.AbortWithError(http.StatusUnauthorized, fmt.Errorf("not auth"))
+			return
+		}
+		arr := strings.Split(auth, " ")
+		if len(arr) != 2 {
+			ctx.AbortWithError(http.StatusUnauthorized, fmt.Errorf("not auth"))
+			return
+		}
+		authType := arr[0]
+		if authType != "Bearer" {
+			ctx.AbortWithError(http.StatusUnauthorized, fmt.Errorf("not auth"))
+			return
+		}
+		authToken := arr[1]
+		if authToken != DefaultToken {
+			ctx.AbortWithError(http.StatusUnauthorized, fmt.Errorf("not auth"))
+			return
+		}
+		ctx.Next()
+	}
 }
 
 func PostUpload(ctx *gin.Context) {

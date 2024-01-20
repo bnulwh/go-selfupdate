@@ -14,6 +14,9 @@ import (
 	"path/filepath"
 	"runtime"
 )
+const (
+	DefaultToken = "ap_pJSFC5wQYkAyI0FIVwKYs9h1hW"
+)
 
 func uploadFile(url, filename, platform, version string) error {
 	var buf bytes.Buffer
@@ -53,6 +56,7 @@ func uploadFile(url, filename, platform, version string) error {
 		return err
 	}
 	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", DefaultToken))
 	client := http.DefaultClient
 	resp, err := client.Do(req)
 	if err != nil {
