@@ -30,6 +30,7 @@ func main() {
 	// print the current version
 	log.Printf("(hello-updater) Hello world! I am currently version: %q", updater.CurrentVersion)
 
+	log.Printf("%#v", updater.Requester)
 	// try to update
 	err := updater.BackgroundRun()
 	if err != nil {
