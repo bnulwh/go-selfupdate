@@ -14,11 +14,13 @@ import (
 	"path/filepath"
 	"runtime"
 )
+
 const (
 	DefaultToken = "ap_pJSFC5wQYkAyI0FIVwKYs9h1hW"
 )
 
 func uploadFile(url, filename, platform, version string) error {
+	fmt.Println("upload to", url)
 	var buf bytes.Buffer
 	signature := selfupdate.GenerateSha256(filename)
 	writer := multipart.NewWriter(&buf)
@@ -95,7 +97,7 @@ func main() {
 	platformFlag := flag.String("platform", defaultPlatform,
 		"Target platform in the form OS-ARCH. Defaults to running os/arch or the combination of the environment variables GOOS and GOARCH if both are set.")
 
-	uploadFlag := flag.String("dest", "http://localhost:8080/upload", "upload url")
+	uploadFlag := flag.String("dest", "http://updates.chinahuik.com/upload", "upload url")
 
 	flag.Parse()
 	if flag.NArg() < 2 {
